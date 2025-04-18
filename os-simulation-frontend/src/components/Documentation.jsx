@@ -463,7 +463,7 @@ const Documentation = () => {
                   </p>
                   <p className="ml-4 font-mono">CT₁ = AT₁ + BT₁</p>
                   <p className="ml-4 font-mono">
-                    CTᵢ = max(ATᵢ, CT_{i - 1}) + BTᵢ for i 1
+                    CTᵢ = max(ATᵢ, CT_ i - 1) + BTᵢ for i 1
                   </p>
 
                   <p>
