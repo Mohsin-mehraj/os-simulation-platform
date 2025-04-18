@@ -8,7 +8,10 @@ const app = express();
 // app.use(cors());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "YOUR_FRONTEND_URL"],
+    origin: [
+      "http://localhost:5173",
+      "https://os-simulation-platform-dr5l.vercel.app",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   })
