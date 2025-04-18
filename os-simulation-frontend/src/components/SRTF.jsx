@@ -48,8 +48,9 @@ const SRTF = () => {
       p.processId = i + 1;
     });
 
-    if (result) {
-      const updatedResults = result
+    // Fix: Check if result exists and if result.schedule is an array
+    if (result && result.schedule && Array.isArray(result.schedule)) {
+      const updatedSchedule = result.schedule
         .filter((item) => item.processId !== processIdToDelete)
         .map((item) => ({
           ...item,
@@ -58,7 +59,12 @@ const SRTF = () => {
               ? item.processId - 1
               : item.processId,
         }));
-      setResult(updatedResults);
+
+      // Create a new result object with the updated schedule
+      setResult({
+        ...result,
+        schedule: updatedSchedule,
+      });
     }
 
     setProcesses(updatedProcesses);
