@@ -325,6 +325,8 @@ const PriorityScheduling = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
+  const api = import.meta.env.VITE_API_URL;
+
   // All your existing functions and handlers remain the same
   const handleAddProcess = () => {
     setProcesses([
@@ -406,7 +408,10 @@ const PriorityScheduling = () => {
         return;
       }
       setResult(null);
-      const response = await axios.post("/api/priority", processedProcesses);
+      const response = await axios.post(
+        `${api}/api/priority`,
+        processedProcesses
+      );
       // Store the complete response object
       setResult(response.data);
     } catch (err) {

@@ -18,6 +18,8 @@ const AlgorithmComparison = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("processes");
 
+  const api = import.meta.env.VITE_API_URL;
+
   const algorithms = [
     { id: "fcfs", name: "First Come First Serve (FCFS)" },
     { id: "sjf", name: "Shortest Job First (SJF)" },
@@ -127,14 +129,14 @@ const AlgorithmComparison = () => {
 
           if (algorithmId === "rr") {
             // RR needs timeQuantum
-            response = await axios.post(`/api/${algorithmId}`, {
+            response = await axios.post(`${api}/api/${algorithmId}`, {
               processes: processedProcesses,
               timeQuantum: timeQuantum,
             });
           } else {
             // Other algorithms just need processes
             response = await axios.post(
-              `/api/${algorithmId}`,
+              `${api}/api/${algorithmId}`,
               processedProcesses
             );
           }

@@ -350,6 +350,8 @@ const SJF = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
+  const api = import.meta.env.VITE_API_URL;
+
   const handleAddProcess = () => {
     setProcesses([
       ...processes,
@@ -424,7 +426,7 @@ const SJF = () => {
         return;
       }
 
-      const response = await axios.post("/api/sjf", processedProcesses);
+      const response = await axios.post(`${api}/api/sjf`, processedProcesses);
       setResult(response.data);
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred");

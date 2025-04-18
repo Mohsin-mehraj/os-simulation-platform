@@ -11,6 +11,8 @@ const SRTF = () => {
   const [error, setError] = useState(null);
   const [showExecutionDetails, setShowExecutionDetails] = useState(false);
 
+  const api = import.meta.env.VITE_API_URL;
+
   const handleAddProcess = () => {
     setProcesses([
       ...processes,
@@ -85,7 +87,7 @@ const SRTF = () => {
         return;
       }
 
-      const response = await axios.post("/api/srtf", processedProcesses);
+      const response = await axios.post(`${api}/api/srtf`, processedProcesses);
       setResult(response.data);
       setShowExecutionDetails(true);
     } catch (err) {

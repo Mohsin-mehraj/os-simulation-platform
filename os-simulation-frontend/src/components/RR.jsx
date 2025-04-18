@@ -329,6 +329,8 @@ const RoundRobin = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
+  const api = import.meta.env.VITE_API_URL;
+
   const handleAddProcess = () => {
     setProcesses([
       ...processes,
@@ -421,7 +423,7 @@ const RoundRobin = () => {
         return;
       }
       setResult(null);
-      const response = await axios.post("/api/round-robin", {
+      const response = await axios.post(`${api}/api/round-robin`, {
         processes: processedProcesses,
         timeQuantum: tq,
       });

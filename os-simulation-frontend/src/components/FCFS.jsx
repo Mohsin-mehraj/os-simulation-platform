@@ -222,6 +222,8 @@ const FCFS = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
+  const api = import.meta.env.VITE_API_URL;
+
   const handleAddProcess = () => {
     setProcesses([
       ...processes,
@@ -296,7 +298,7 @@ const FCFS = () => {
         return;
       }
 
-      const response = await axios.post("/api/fcfs", processedProcesses);
+      const response = await axios.post(`${api}/api/fcfs`, processedProcesses);
       console.log("API Response:", response.data); // Debug log
       setResult(response.data); // Store the whole response object
     } catch (err) {

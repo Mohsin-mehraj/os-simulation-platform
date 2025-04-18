@@ -14,6 +14,8 @@ const MLQ = () => {
   const [error, setError] = useState(null);
   const [nextProcessId, setNextProcessId] = useState(1);
 
+  const api = import.meta.env.VITE_API_URL;
+
   // Add a new queue
   const addNewQueue = () => {
     setQueues([
@@ -145,7 +147,9 @@ const MLQ = () => {
         })),
       }));
 
-      const response = await axios.post("/api/mlq", { queues: apiQueues });
+      const response = await axios.post(`${api}/api/mlq`, {
+        queues: apiQueues,
+      });
       setResult(response.data);
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred");
