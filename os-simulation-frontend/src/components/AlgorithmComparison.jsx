@@ -1,3 +1,4 @@
+// AlgorithmComparison.jsx with fixes
 import React, { useState } from "react";
 import axios from "axios";
 import { Tabs, TabList, Tab, TabPanel } from "../components/tabs";
@@ -10,22 +11,28 @@ const AlgorithmComparison = () => {
   const [selectedAlgorithms, setSelectedAlgorithms] = useState([
     "fcfs",
     "sjf",
-    "ps",
-    "rr",
+    "priority", // Changed from "ps" to match backend endpoint
+    "round-robin", // Changed from "rr" to match backend endpoint
+    "srtf", // Added SRTF
   ]);
   const [results, setResults] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("processes");
 
-  const api = import.meta.env.VITE_API_URL;
+  const api = import.meta.env.VITE_API_URL || "http://localhost:5000"; // Added fallback
 
+  // Map of algorithm IDs to display names and backend endpoint paths
   const algorithms = [
-    { id: "fcfs", name: "First Come First Serve (FCFS)" },
-    { id: "sjf", name: "Shortest Job First (SJF)" },
-    { id: "srtf", name: "Shortest Remaining Time First (SRTF)" },
-    { id: "rr", name: "Round Robin (RR)" },
-    { id: "ps", name: "Priority Scheduling (PS)" },
+    { id: "fcfs", name: "First Come First Serve (FCFS)", endpoint: "fcfs" },
+    { id: "sjf", name: "Shortest Job First (SJF)", endpoint: "sjf" },
+    {
+      id: "srtf",
+      name: "Shortest Remaining Time First (SRTF)",
+      endpoint: "srtf",
+    },
+    { id: "round-robin", name: "Round Robin (RR)", endpoint: "round-robin" },
+    { id: "priority", name: "Priority Scheduling (PS)", endpoint: "priority" },
   ];
 
   // Handler for adding a new process
@@ -34,9 +41,9 @@ const AlgorithmComparison = () => {
       ...processes,
       {
         processId: processes.length + 1,
-        arrivalTime: "",
-        burstTime: "",
-        priority: "",
+        arrivalTime: 0,
+        burstTime: 1,
+        priority: 1,
       },
     ]);
   };
@@ -106,7 +113,7 @@ const AlgorithmComparison = () => {
       const processedProcesses = processes.map((process) => ({
         ...process,
         arrivalTime: process.arrivalTime === "" ? 0 : process.arrivalTime,
-        burstTime: process.burstTime === "" ? 0 : process.burstTime,
+        burstTime: process.burstTime === "" ? 1 : process.burstTime,
         priority: process.priority === "" ? 1 : process.priority,
       }));
 
@@ -125,26 +132,41 @@ const AlgorithmComparison = () => {
 
       for (const algorithmId of selectedAlgorithms) {
         try {
-          let response;
+          // Find the algorithm configuration
+          const algorithm = algorithms.find((a) => a.id === algorithmId);
+          if (!algorithm) {
+            console.error(`Unknown algorithm: ${algorithmId}`);
+            continue;
+          }
 
-          if (algorithmId === "rr") {
-            // RR needs timeQuantum
-            response = await axios.post(`${api}/api/${algorithmId}`, {
+          // Use the correct endpoint
+          const endpoint = algorithm.endpoint;
+          console.log(`Sending request to: ${api}/api/${endpoint}`);
+
+          let response;
+          if (endpoint === "round-robin") {
+            // Round Robin needs timeQuantum
+            response = await axios.post(`${api}/api/${endpoint}`, {
               processes: processedProcesses,
               timeQuantum: timeQuantum,
             });
           } else {
             // Other algorithms just need processes
             response = await axios.post(
-              `${api}/api/${algorithmId}`,
+              `${api}/api/${endpoint}`,
               processedProcesses
             );
           }
 
-          resultsData[algorithmId] = response.data;
+          if (response.data) {
+            console.log(`${algorithmId} results:`, response.data);
+            resultsData[algorithmId] = response.data;
+          } else {
+            resultsData[algorithmId] = { error: "Empty response" };
+          }
         } catch (err) {
           console.error(`Error with ${algorithmId}:`, err);
-          resultsData[algorithmId] = { error: err.message };
+          resultsData[algorithmId] = { error: err.message || "Request failed" };
         }
       }
 
@@ -308,7 +330,7 @@ const AlgorithmComparison = () => {
                               handleChange(index, "burstTime", e.target.value)
                             }
                             onBlur={(e) => handleBlur(index, "burstTime")}
-                            placeholder="0"
+                            placeholder="1"
                             className="w-20 sm:w-24 px-2 sm:px-3 py-1 text-xs sm:text-sm border border-slate-200 rounded-md 
                                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                                      transition-all duration-200 appearance-textfield"
@@ -411,7 +433,7 @@ const AlgorithmComparison = () => {
               </div>
 
               {/* Round Robin Time Quantum */}
-              {selectedAlgorithms.includes("rr") && (
+              {selectedAlgorithms.includes("round-robin") && (
                 <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
                   <h2 className="text-lg font-semibold text-slate-800 mb-4">
                     Round Robin Settings
