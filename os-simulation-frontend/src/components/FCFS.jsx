@@ -92,7 +92,7 @@ const FCFS = () => {
       }
 
       const response = await axios.post(`${api}/api/fcfs`, processedProcesses);
-      console.log("API Response:", response.data); // Debug log
+      // console.log("API Response:", response.data); // Debug log
       setResult(response.data); // Store the whole response object
     } catch (err) {
       console.error("Error:", err);
