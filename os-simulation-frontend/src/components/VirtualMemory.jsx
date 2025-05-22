@@ -3,8 +3,6 @@ import {
   Play,
   Pause,
   RotateCcw,
-  ChevronDown,
-  ChevronUp,
   Info,
   Cpu,
   Database,
